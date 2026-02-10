@@ -13,19 +13,21 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   .split(',')
   .map(o => o.trim());
 
-const corsOptions = {
+app.use(cors({
   origin: (origin, callback) => {
+    console.log("🌍 Origin:", origin);
+
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(null, false);
+      return callback(null, true);
     }
+
+    return callback(new Error("Not allowed by CORS"));
   },
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
-};
+}));
 
-app.use(cors(corsOptions)); 
+app.options("*", cors());
 
 app.use(express.json());
 
