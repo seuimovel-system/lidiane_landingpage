@@ -1,3 +1,3 @@
 const CONFIG = {
-  API_URL: "https://seu-backend.onrender.com"
+  API_URL: "https://lidiane-landingpage.onrender.com"
 }
