@@ -30,20 +30,18 @@ document.querySelectorAll('input[name="corretor"]').forEach((radio) => {
 });
 
 async function sendLeadToN8N(data) {
-  const tokenResponse = await fetch('https://lidiane-landingpage.onrender.com');
+  const API_URL = CONFIG.API_URL;
+
+  const tokenResponse = await fetch(`${API_URL}/token`);
+  if (!tokenResponse.ok) throw new Error('Erro ao obter token');
+
   const tokenData = await tokenResponse.json();
 
-  if (!tokenResponse.ok) {
-    throw new Error('Erro ao obter token');
-  }
-
-  const token = tokenData.token;
-
-  const response = await fetch('http://localhost:3000/send-lead', {
+  const response = await fetch(`${API_URL}/send-lead`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` 
+      'Authorization': `Bearer ${tokenData.token}`
     },
     body: JSON.stringify(data)
   });
@@ -135,6 +133,4 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
             target.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     });
-
 });
-
