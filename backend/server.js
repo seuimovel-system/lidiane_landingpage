@@ -9,25 +9,21 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  .split(',')
-  .map(o => o.trim());
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 
 app.use(cors({
   origin: (origin, callback) => {
-    console.log("🌍 Origin:", origin);
+    if (!origin) return callback(null, true);
 
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
-    return callback(new Error("Not allowed by CORS"));
+    return callback(null, true); 
   },
-  methods: ["GET", "POST", "OPTIONS"],
+  methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
-app.options("*", cors());
 
 app.use(express.json());
 
