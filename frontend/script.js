@@ -43,7 +43,7 @@ async function sendLeadToN8N(data) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` // 👈 token JWT
+      'Authorization': `Bearer ${token}` 
     },
     body: JSON.stringify(data)
   });
@@ -135,4 +135,5 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
             target.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     });
+
 });
