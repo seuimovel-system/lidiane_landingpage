@@ -7,19 +7,25 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  .split(',')
+  .map(o => o.trim());
 
-app.use(cors({
-  origin: function (origin, callback) {
+const corsOptions = {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS bloqueado: ' + origin));
+      callback(null, false);
     }
-  }
-}));
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions)); 
 
 app.use(express.json());
 
@@ -48,15 +54,13 @@ function authJWT(req, res, next) {
     jwt.verify(token, process.env.JWT_SECRET);
     next();
   } catch {
-    return res.status(403).json({ error: 'Token inválido ou expirado' });
+    return res.status(403).json({ error: 'Token inválido' });
   }
 }
 
 app.post('/send-lead', authJWT, async (req, res) => {
-  const n8nWebhook = process.env.N8N_WEBHOOK_URL;
-
   try {
-    const response = await fetch(n8nWebhook, {
+    const response = await fetch(process.env.N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req.body)
@@ -73,5 +77,5 @@ app.post('/send-lead', authJWT, async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Backend rodando em http://localhost:${PORT}`);
+  console.log("🚀 Backend rodando na porta " + PORT);
 });
