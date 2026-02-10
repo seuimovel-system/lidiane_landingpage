@@ -30,7 +30,7 @@ document.querySelectorAll('input[name="corretor"]').forEach((radio) => {
 });
 
 async function sendLeadToN8N(data) {
-  const tokenResponse = await fetch('http://localhost:3000/token');
+  const tokenResponse = await fetch('https://lidiane-landingpage.onrender.com');
   const tokenData = await tokenResponse.json();
 
   if (!tokenResponse.ok) {
@@ -137,3 +137,4 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     });
 
 });
+
