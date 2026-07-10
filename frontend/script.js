@@ -54,6 +54,30 @@ async function sendLeadToN8N(data) {
   return true;
 }
 
+// Envia o lead também ao funil de recrutamento do OnixCloud (OnixTeam).
+// A ponte pública valida e injeta o segredo DO LADO DO SERVIDOR (nada no client).
+const ONIX_LEAD_URL = "https://app.onixcloud.com.br/api/site-lead/team";
+
+async function sendLeadToOnix(data) {
+    const response = await fetch(ONIX_LEAD_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            nome: data.nome,
+            email: data.email,
+            telefone: data.telefone,
+            assunto: "Lead — Landing Carreira (Lidiane)",
+            observacao:
+                "Já é corretor: " + (data.corretor || "?") +
+                (data.corretora ? " | Corretora atual: " + data.corretora : ""),
+            origem: "lp-lidiane",
+            site: "lidianepinheiro.seuimovel.com.br",
+        }),
+    });
+    if (!response.ok) throw new Error("Onix " + response.status);
+    return true;
+}
+
 // Submeter formulário
 document
     .getElementById("leadForm")
@@ -80,14 +104,24 @@ document
             submitBtn.disabled = true;
             submitBtn.textContent = "ENVIANDO...";
 
-            await sendLeadToN8N({
+            const lead = {
                 nome,
                 email,
                 telefone,
                 corretor,
                 corretora,
                 origem: "RE/MAX - Landing Page Carreira",
-            });
+            };
+
+            // Envia aos DOIS destinos (n8n antigo + funil OnixCloud).
+            // Sucesso se pelo menos um aceitar — nenhum quebra o outro.
+            const resultados = await Promise.allSettled([
+                sendLeadToN8N(lead),
+                sendLeadToOnix(lead),
+            ]);
+            if (resultados.every((r) => r.status === "rejected")) {
+                throw resultados[0].reason;
+            }
 
             document.getElementById("ebooksModal").classList.add("active");
 

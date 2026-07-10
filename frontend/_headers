@@ -1,0 +1,11 @@
+# Cloudflare Pages — cache dos assets estáticos (nomes não versionados: 7 dias)
+/*.jpg
+  Cache-Control: public, max-age=604800
+/*.png
+  Cache-Control: public, max-age=604800
+/*.webp
+  Cache-Control: public, max-age=604800
+/*.css
+  Cache-Control: public, max-age=86400
+/*.js
+  Cache-Control: public, max-age=86400
