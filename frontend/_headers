@@ -1,9 +1,22 @@
-# Cloudflare Pages — cache dos assets estáticos (nomes não versionados: 7 dias)
+# Cloudflare Pages — cabeçalhos da LP.
+
+# Todas as respostas: a página não abre dentro de iframe de outro site (o
+# formulário não pode ser "vestido" por cima de outra página) e não pede
+# câmera, microfone nem localização.
+/*
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Cache dos assets estáticos. Imagens sem versão no nome: 7 dias. CSS e JS:
+# 1 dia, e o index.html troca o ?v= a cada publicação.
 /*.jpg
   Cache-Control: public, max-age=604800
 /*.png
   Cache-Control: public, max-age=604800
 /*.webp
+  Cache-Control: public, max-age=604800
+/*.svg
   Cache-Control: public, max-age=604800
 /*.css
   Cache-Control: public, max-age=86400
